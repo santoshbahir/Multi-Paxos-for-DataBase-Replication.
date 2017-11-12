@@ -1,0 +1,34 @@
+	Paxos program is made up of following 5 thread.
+
+1)	Client: 
+		Client reads the input update from <node Name>.input file present in
+	./input directory. It puts it in a buffer shared with proposer. Then it
+	goes to sleep waiting for proposer to pick the update. Once poposer picks
+	the update, client moves on to next updates.
+
+2) Proposer:
+		Once update is avaliable from client; proposr runs paxos round to decide
+	Transaction Id for this Id. <local update Id, global TN> is the value for
+	which proposer runs the paxos round. Once TN is decided, it sends the update
+	to all the learners. Since multiple rounds of paxos are run to agree upon
+	the sequence of updates from all the proposer, it is sequence consensus.
+	A sequence consensus through multi-paxos.
+
+3) Acceptor:
+		Acceptor responds to the proposers proposals based upon current promised
+	and accpeted proposals.
+
+4) Learner:
+		Learner applies the updates received from the proposers. Application is
+	just appending <node name>.output file under ./output directory. All the
+	learners apply all the udpates in the same sequence, hence it is state
+	machine replication.
+
+5) Receiver:
+		On each node, receiver receives messages over the network and sends to 
+	appropriate threads. It queues updates in three queues meant for proposer,
+	acceptor and learner.
+
+	
+				
+	

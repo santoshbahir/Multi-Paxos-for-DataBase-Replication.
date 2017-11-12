@@ -1,0 +1,53 @@
+1) Create Docker Network.
+
+	docker network create sbn
+
+	- Above command creates docker network with name 'sbn'.
+	- All the containers are present on this network and hence
+	  are able to commnuicate with each other over the network.
+	- Inside each container paxos program is running.
+
+2) Create N number of docker containers. Say N is 5. This creates
+   Paxos System of N nodes.
+	
+	- Ensure that you are in the project directory.
+	- Following command creates N(5) containers.
+	
+     sudo docker run -d -it --net sbn -v `pwd`:/ds --cap-add=SYS_PTRACE --security-opt seccomp=unconfined --name c1 -h c1 ubuntu:latest /bin/bash
+     sudo docker run -d -it --net sbn -v `pwd`:/ds --cap-add=SYS_PTRACE --security-opt seccomp=unconfined --name c2 -h c2 ubuntu:latest /bin/bash
+     sudo docker run -d -it --net sbn -v `pwd`:/ds --cap-add=SYS_PTRACE --security-opt seccomp=unconfined --name c3 -h c3 ubuntu:latest /bin/bash
+     sudo docker run -d -it --net sbn -v `pwd`:/ds --cap-add=SYS_PTRACE --security-opt seccomp=unconfined --name c4 -h c4 ubuntu:latest /bin/bash
+     sudo docker run -d -it --net sbn -v `pwd`:/ds --cap-add=SYS_PTRACE --security-opt seccomp=unconfined --name c5 -h c5 ubuntu:latest /bin/bash
+
+	- Name of the containers are c1, c2, c3, c4 and c5.
+	- All of them are present on the same sbn network.
+	- Each one starts shell as its start program.
+	- It attaches 'pwd' as local volume at path /ds inside the container.
+
+3) Generate input to the program. Decide on the no of proposers in
+   the paxos system, say NoP (Number of proposer). Also determine the
+   no of updates to generate for each of proposers, say NoUP.
+	
+	./gendataset c1 c2 .. CNoP NoUP
+
+	- This creates input for each of the proposer.
+			
+4) 	start and attach to each containers.
+	- Run following command in each of their own terminal.
+
+		Docker start <container name>
+		Docker attacch <container name>
+
+5)	Inside each container switch to ds directory.
+
+6)	start the paxos program in the container.
+
+	./paxos c1 c2 c3 ... CN <port no> <no of proposer(NoP)>.
+
+	- First NoP nodes are proposers.
+	- Each udpate processed by paxos on each node is displayed on terminal.
+	- It can be redirected to file.
+	- Each processed update is applied to the local log/db/state machine.
+	- All the updates applied on each node are kept in <node name>.output
+	  file under output directory.
+	- All these output files are replicas of each either.

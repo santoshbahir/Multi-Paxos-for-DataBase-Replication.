@@ -1,0 +1,6 @@
+Following files has all the instruction for building and running the project.
+	
+BUILD	-	Instruction to build the project.
+SETUP	-	Instruction to create distributed system setup using Docker
+			contaiers.
+DESIGN	-	Design details of the project.
